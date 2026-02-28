@@ -4,43 +4,64 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to Philippine Airlines!\n**Loyalty Points Section**");
+            
+            string customerName = "", passportId = "", redeemRewards, menuInp, destination;
+            int points = 0, earnedPointsList = 0, earnedCount = 0, redeemCount = 0;
+            decimal ticketPrice = 0.0m;
+            
+            Console.WriteLine("Welcome to Philippine Airlines!\n------Loyalty Points Section------\n");
 
-            string username, flightCode = "PH1234";
-            int points = 0, phcode = 20;
-
-            Console.Write("Enter username: ");
-            string usernameInp = Console.ReadLine();
-
-            Console.WriteLine(usernameInp);
           
 
-            Console.WriteLine("Available Points: "+points+"pts");
 
-            Console.Write("Proceeed to Add Points or Redeem Points? (add/redeem): ";
-            string choice = Console.ReadLine();
+            Console.Write("Enter Passport ID: ");
+            passportId = Console.ReadLine();
+                if  (passportId == null);
+                passportId = passportId.Trim().ToUpper();
 
-            if (choice == "add")
+            Console.Write("Enter Customer Name: ");
+            customerName = Console.ReadLine();
+                if (customerName == null);
+                customerName = customerName.Trim().ToUpper();
+
+            Console.Write("Enter Current Points: ");
+            points = Convert.ToInt32(Console.ReadLine());
+           if (points < 0)
             {
-                Console.Write("**ADD POINTS**\nEnter flight code: ");
-                string code = Console.ReadLine();
+                Console.WriteLine("ERROR: Loyalty points must not be less than 0.");
+                return;
+            }
+            else
+            {
+                 Console.WriteLine("ERROR: Loyalty points must be a number.");
+                return;
+            }
 
-                if (code == flightCode)
+            bool menu = true;
+             while (menu)
+            {
+                Console.WriteLine("\n------MENU------");
+                Console.WriteLine("1) Earn Points\n2) Redeem Points\n3) View Account\n 4) Exit");
+                Console.Write("Choose 1-4: ");
+                menuInp = Console.ReadLine();
+                if (menuInp < 0 || menuInp >= 4)
                 {
-                    int addCode = points + phcode;
-                    Console.Write("Available Points: " + addCode);
+                    Console.WriteLine("ERROR: Choose 1 to 4 only."); 
+                    return;
+                }
+                else if (menuInp == 1)
+                {
+                    Console.WriteLine("------EARN POINTS------");
+                    Console.Write("Enter Destination: ");
+                    destination = Console.ReadLine();
+                    if (destination == null) ;
+                    destination = destination.Trim().ToUpper();
                 }
                 else
                 {
-                    Console.WriteLine("Not Available");
+                    Console.WriteLine("ERROR: Numbers Only");
+                    return;
                 }
-                
-            }
-            else if (choice == "redeem")
-            {
-                Console.WriteLine("**REDEEM POINTS**");
-                Console.WriteLine("1) 10% OFF Starbucks\n2) Travel Voucher to Korea\n Choose rewards: ");
-            }
 
         }
     }
