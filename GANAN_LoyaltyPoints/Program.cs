@@ -5,7 +5,7 @@
         static void Main(string[] args)
         {
             
-string customerName = "", passportId = "", redeemRewards, destination;
+            string customerName = "", passportId = "", redeemRewards, destination;
             int points = 0, earnedPointsList = 0, earnedCount = 0, redeemCount = 0, menuInp;
             decimal ticketPrice = 0.0m;
             
@@ -26,11 +26,6 @@ string customerName = "", passportId = "", redeemRewards, destination;
            if (points < 0)
             {
                 Console.WriteLine("ERROR: Loyalty points must not be less than 0.");
-            }
-            else
-            {
-                 Console.WriteLine("ERROR: Loyalty points must be a number.");
-                
             }
 
             bool menu = true;
@@ -58,7 +53,7 @@ string customerName = "", passportId = "", redeemRewards, destination;
                     Console.WriteLine("ERROR: Numbers Only");
                     return;
                 }
-
+             }
         }
     }
 }
