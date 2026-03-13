@@ -1,59 +1,79 @@
-﻿namespace GANAN_LoyaltyPoints
+﻿using System;
+using System.Collections.Generic;
+using LoyaltyPointsModels;
+using LoyaltyPointsAppServices;
+
+
+namespace GANAN_LoyaltyPoints
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            
-            string customerName = "", passportId = "", redeemRewards, destination;
-            int points = 0, earnedPointsList = 0, earnedCount = 0, redeemCount = 0, menuInp;
-            decimal ticketPrice = 0.0m;
-            
-            Console.WriteLine("Welcome to Philippine Airlines!\n------Loyalty Points Section------\n");
+            Console.Title = "Flight Booking App: Loyalty Points System";
+
+            LPAppServices appServices = new LPAppServices();
+            Customer customer = new Customer();
+
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("        Loyalty Points");
+            Console.WriteLine("-------------------------------");
 
             Console.Write("Enter Passport ID: ");
-            passportId = Console.ReadLine();
-                if  (passportId == null);
-                passportId = passportId.Trim().ToUpper();
+            customer.PassportId = Console.ReadLine();
 
             Console.Write("Enter Customer Name: ");
-            customerName = Console.ReadLine();
-                if (customerName == null);
-                customerName = customerName.Trim().ToUpper();
+            customer.CustomerName = Console.ReadLine().ToUpper();
 
-            Console.Write("Enter Current Points: ");
-            points = Convert.ToInt32(Console.ReadLine());
-           if (points < 0)
-            {
-                Console.WriteLine("ERROR: Loyalty points must not be less than 0.");
-            }
+            Console.Write("Enter Current Loyalty Points: ");
+            customer.LoyaltyPoints = Convert.ToInt32(Console.ReadLine());
 
-            bool menu = true;
-             while (menu)
+            bool running = true;
+
+            while (running) 
             {
-                Console.WriteLine("\n------MENU------");
-                Console.WriteLine("1) Earn Points\n2) Redeem Points\n3) View Account\n 4) Exit");
-                Console.Write("Choose 1-4: ");
-                menuInp = Convert.ToInt32(Console.ReadLine());
-                if (menuInp < 1 || menuInp > 4)
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("            MENU");
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine("1. Earn Points");
+                Console.WriteLine("2. Redeem Points");
+                Console.WriteLine("3. View Account");
+                Console.WriteLine("4. Exit");
+                Console.WriteLine("-------------------------------");
+                Console.Write("Choose an option (1-4): ");
+
+                int choice = Convert.ToInt16(Console.ReadLine());
+
+                if (choice == 1)
                 {
-                    Console.WriteLine("ERROR: Choose 1 to 4 only."); 
-                    return;
+                    appServices.EarnPoints(customer);
                 }
-                else if (menuInp == 1)
+                else if (choice == 2)
                 {
-                    Console.WriteLine("------EARN POINTS------");
-                    Console.Write("Enter Destination: ");
-                    destination = Console.ReadLine();
-                    if (destination == null) ;
-                    destination = destination.Trim().ToUpper();
+                    appServices.RedeemPoints(customer);
+                }
+                else if (choice == 3)
+                {
+                    appServices.ViewAccount(customer);
+                }
+                else if (choice == 4)
+                {
+                    running = false;
+                    Console.WriteLine("END OF TRANSACTION");
                 }
                 else
                 {
-                    Console.WriteLine("ERROR: Numbers Only");
-                    return;
+                    Console.WriteLine("Invalid option. Please choose between 1 and 4.");
                 }
-             }
+
+                Console.WriteLine();
+                Console.WriteLine("Press enter to continue...");
+                Console.ReadKey();
+                
+            }
+            
         }
+
     }
+
 }

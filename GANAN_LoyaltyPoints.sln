@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.11.35327.3
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11605.240 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GANAN_LoyaltyPoints", "GANAN_LoyaltyPoints\GANAN_LoyaltyPoints.csproj", "{B7DADDF3-D4BC-474C-B50E-1E2D1D5B1D97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoyaltyPointsDataServices", "LoyaltyPointsDataServices\LoyaltyPointsDataServices.csproj", "{A0E6E054-A25B-42B7-8D6C-EE065BD7EFE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoyaltyPointsAppServices", "LoyaltyPointsAppServices\LoyaltyPointsAppServices.csproj", "{20B0C9C3-051A-4DA6-B60F-B1804A088959}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoyaltyPointsModels", "LoyaltyPointsModels\LoyaltyPointsModels.csproj", "{58A384C1-7A23-435E-A206-9C1CC40D8E53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{B7DADDF3-D4BC-474C-B50E-1E2D1D5B1D97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7DADDF3-D4BC-474C-B50E-1E2D1D5B1D97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7DADDF3-D4BC-474C-B50E-1E2D1D5B1D97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0E6E054-A25B-42B7-8D6C-EE065BD7EFE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0E6E054-A25B-42B7-8D6C-EE065BD7EFE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0E6E054-A25B-42B7-8D6C-EE065BD7EFE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0E6E054-A25B-42B7-8D6C-EE065BD7EFE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20B0C9C3-051A-4DA6-B60F-B1804A088959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20B0C9C3-051A-4DA6-B60F-B1804A088959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20B0C9C3-051A-4DA6-B60F-B1804A088959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20B0C9C3-051A-4DA6-B60F-B1804A088959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58A384C1-7A23-435E-A206-9C1CC40D8E53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A384C1-7A23-435E-A206-9C1CC40D8E53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A384C1-7A23-435E-A206-9C1CC40D8E53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A384C1-7A23-435E-A206-9C1CC40D8E53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
