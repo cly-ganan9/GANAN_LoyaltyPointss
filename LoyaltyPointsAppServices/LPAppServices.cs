@@ -10,79 +10,48 @@ namespace LoyaltyPointsAppServices
 {
     public class LPAppServices
     {
-        LPDataServices dataServices = new LPDataServices();
+        private LPDataServices dataServices = new LPDataServices();
 
-        public void EarnPoints(Customer customer)
+        public int EarnPoints(Customer customer, string destination, decimal ticketPrice)
         {
-            Console.WriteLine("--------- EARN POINTS ---------");
-            
-            Console.Write("Enter Destination: ");
-            string destination = Console.ReadLine().ToUpper();
-
-            Console.Write("Enter Ticket Price: ");
-            decimal ticketPrice = Convert.ToDecimal(Console.ReadLine());
-
-            int earnedPoints = (int)(ticketPrice / 100);
+            int earnedPoints = (int)(ticketPrice / 100)
             customer.LoyaltyPoints += earnedPoints;
 
-            Console.WriteLine();
-            Console.WriteLine("Points Earned: " + earnedPoints);
-            Console.WriteLine("Updated Balance: " + customer.LoyaltyPoints);
+            dataServices.AddTransaction(customer, "Earned " + earnedPoints + " points for flight to " + destination);
+            dataServices.UpdateCustomer(customer);
 
-            dataServices.AddTransaction(customer, "Earned " + earnedPoints + " points from " + destination);
+            return earnedPoints;
         }
 
-        public void RedeemPoints(Customer customer)
+        public (string rewardName, int rewardCost) RedeemPoints(Customer customer, int option)
         {
-            Console.WriteLine("--------- REDEEM POINTS ---------");
-            Console.WriteLine("Current Points: " + customer.LoyaltyPoints);
-            Console.WriteLine();
-            Console.Write("Choose reward to redeem (1-4): ");
-            int options = Convert.ToInt16(Console.ReadLine());
-
             string[] rewardNames = { "Starbucks Voucher", "50% Travel Discount", "Lounge Access", "SM Gift Card" };
             int[] rewardPoints = { 100, 500, 1000, 200 };
 
-            for (int i = 0; i < rewardNames.Length; i++)
-            {
-                Console.WriteLine((i + 1) + ". " + rewardNames[i] + " - " + rewardPoints[i] + " points");
-            }
-
-            int index = options - 1;
+            int index = option - 1;
             customer.LoyaltyPoints -= rewardPoints[index];
 
-            Console.WriteLine();
-            Console.WriteLine("Redeemed: " + rewardNames[index]);
-            Console.WriteLine("Updated Balance: " + customer.LoyaltyPoints);
-
             dataServices.AddTransaction(customer, "Redeemed " + rewardNames[index] + " for " + rewardPoints[index] + " points");
+            dataServices.UpdateCustomer(customer);
 
-
+            return (rewardNames[index], rewardPoints[index]);
         }
 
-        public void ViewAccount(Customer customer)
+        public Customer ViewAccount(Customer customer)
         {
-            Console.WriteLine("--------- ACCOUNT DETAILS ---------");
-
-            Console.WriteLine("Passport ID: " + customer.PassportId);
-            Console.WriteLine("Customer Name: " + customer.CustomerName);
-            Console.WriteLine("Current Points: " + customer.LoyaltyPoints);
-
-            Console.WriteLine();
-            Console.WriteLine("Transaction History:");
-
-            if (customer.TransactionHistory.Count == 0)
-            {
-                Console.WriteLine("No transactions yet.");
-            }
-            else
-            {
-                for (int i = 0; i < customer.TransactionHistory.Count; i++)
-                {
-                    Console.WriteLine((i + 1) + ". " + customer.TransactionHistory[i]);
-                }
-
-            }
-        }    
+            return customer;
+        }
+        public string[] GetRewardNames()
+        {
+            return new string[] { "Starbucks Voucher", "50% Travel Discount", "Lounge Access", "SM Gift Card" };
+        }
+        public int[] GetRewardPoints()
+        {
+            return new int[] { 100, 500, 1000, 200 };
+        }
+        public void SaveCustomer(Customer customer)
+        {
+            dataServices.SaveCustomer(customer);
+        }
     }
 }
