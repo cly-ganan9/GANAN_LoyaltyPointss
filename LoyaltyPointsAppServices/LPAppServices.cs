@@ -14,7 +14,7 @@ namespace LoyaltyPointsAppServices
 
         public int EarnPoints(Customer customer, string destination, decimal ticketPrice)
         {
-            int earnedPoints = (int)(ticketPrice / 100)
+            int earnedPoints = (int)(ticketPrice / 100);
             customer.LoyaltyPoints += earnedPoints;
 
             dataServices.AddTransaction(customer, "Earned " + earnedPoints + " points for flight to " + destination);

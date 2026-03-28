@@ -16,14 +16,14 @@ namespace LoyaltyPointsDataServices
         }
         public void SaveCustomer(Customer customer)
         {
-            var existing = GetCustomerByPassportID(customer.PassportId);
+            var existing = GetCustomerByPassportId(customer.PassportId);
 
             if (existing == null)
             {
                 customers.Add(customer);
             }
         }
-        public Customer? GetCustomerByPassportID(string passportId)
+        public Customer? GetCustomerByPassportId(string passportId)
         {
             return customers.FirstOrDefault(c => c.PassportId == passportId);
         }
@@ -33,7 +33,7 @@ namespace LoyaltyPointsDataServices
         }
         public void UpdateCustomer(Customer customer)
         {
-            var existing = GetCustomerByPassportID(customer.PassportId);
+            var existing = GetCustomerByPassportId(customer.PassportId);
             if (existing != null)
             {
                 existing.CustomerName = customer.CustomerName;

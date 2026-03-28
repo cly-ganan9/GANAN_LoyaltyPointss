@@ -12,7 +12,7 @@ namespace LoyaltyPointsDataServices
     {
         private List<Customer> customers = new List<Customer>();
         
-        private readonly string _jsonFileName;
+        private string _jsonFileName;
 
         public LPJsonData()
         {
