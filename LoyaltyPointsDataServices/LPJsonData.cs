@@ -11,36 +11,32 @@ namespace LoyaltyPointsDataServices
     public class LPJsonData : ILPDataServices
     {
         private List<Customer> customers = new List<Customer>();
-        
+
         private string _jsonFileName;
 
         public LPJsonData()
         {
-            _jsonFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Customers.json");
+            _jsonFileName = $"{AppDomain.CurrentDomain.BaseDirectory}/Customers.json";
 
-            EnsureJsonFileExists();
+
             RetrieveDataFromJsonFile();
         }
 
-        private void EnsureJsonFileExists()
-        {
-            if (!File.Exists(_jsonFileName))
-            {
-                File.WriteAllText(_jsonFileName, "[]");
-            }
-        }
         private void SaveDataToJsonFile()
         {
-            string json = JsonSerializer.Serialize(customers, new JsonSerializerOptions 
-            { 
-                WriteIndented = true 
-            });
-            File.WriteAllText(_jsonFileName, json);
+            using (var outputStream = File.OpenWrite(_jsonFileName))
+            {
+                JsonSerializer.Serialize<List<Customer>>(
+                    new Utf8JsonWriter(outputStream, new JsonWriterOptions
+                    { SkipValidation = true, Indented = true })
+                    , customers);
+            }
         }
+
         private void RetrieveDataFromJsonFile()
         {
             string json = File.ReadAllText(_jsonFileName);
-            
+
             customers = JsonSerializer.Deserialize<List<Customer>>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true

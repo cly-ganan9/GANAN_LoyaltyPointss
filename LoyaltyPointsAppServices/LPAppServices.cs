@@ -10,14 +10,14 @@ namespace LoyaltyPointsAppServices
 {
     public class LPAppServices
     {
-        private LPDataServices dataServices = new LPDataServices();
+        private LPDataServices dataServices = new LPDataServices(new LPJsonData());
 
         public int EarnPoints(Customer customer, string destination, decimal ticketPrice)
         {
             int earnedPoints = (int)(ticketPrice / 100);
             customer.LoyaltyPoints += earnedPoints;
 
-            dataServices.AddTransaction(customer, "Earned " + earnedPoints + " points for flight to " + destination);
+            customer.TransactionHistory.Add("Earned " + earnedPoints + " points for flight to " + destination);
             dataServices.UpdateCustomer(customer);
 
             return earnedPoints;
@@ -31,7 +31,7 @@ namespace LoyaltyPointsAppServices
             int index = option - 1;
             customer.LoyaltyPoints -= rewardPoints[index];
 
-            dataServices.AddTransaction(customer, "Redeemed " + rewardNames[index] + " for " + rewardPoints[index] + " points");
+            customer.TransactionHistory.Add("Redeemed " + rewardNames[index] + " for " + rewardPoints[index] + " points");
             dataServices.UpdateCustomer(customer);
 
             return (rewardNames[index], rewardPoints[index]);
