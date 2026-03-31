@@ -1,0 +1,41 @@
+[
+  {
+    "PassportId": "12345",
+    "CustomerName": "JUAN",
+    "LoyaltyPoints": 2668,
+    "TransactionHistory": [
+      "Redeemed Lounge Access for 1000 points",
+      "Redeemed 50% Travel Discount for 500 points",
+      "Earned 12 points for flight to MACAU",
+      "Redeemed Lounge Access for 1000 points",
+      "Redeemed SM Gift Card for 200 points",
+      "Redeemed Starbucks Voucher for 100 points",
+      "Redeemed Lounge Access for 1000 points",
+      "Redeemed Lounge Access for 1000 points"
+    ]
+  },
+  {
+    "PassportId": "456789",
+    "CustomerName": "PEDRO DIAZ",
+    "LoyaltyPoints": 1393,
+    "TransactionHistory": [
+      "Earned 30 points for flight to FRANCE",
+      "Redeemed Lounge Access for 1000 points",
+      "Redeemed Lounge Access for 1000 points",
+      "Redeemed SM Gift Card for 200 points",
+      "Redeemed 50% Travel Discount for 500 points",
+      "Redeemed 50% Travel Discount for 500 points"
+    ]
+  },
+  {
+    "PassportId": "649895",
+    "CustomerName": "CECILLE TUA",
+    "LoyaltyPoints": 196,
+    "TransactionHistory": [
+      "Redeemed Lounge Access for 1000 points",
+      "Redeemed SM Gift Card for 200 points",
+      "Earned 40 points for flight to JAPAN",
+      "Redeemed Starbucks Voucher for 100 points"
+    ]
+  }
+]
