@@ -1,0 +1,41 @@
+[
+  {
+    "AccountId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "FirstName": "Clyza",
+    "LastName": "Ganan",
+    "Birthdate": "09/21/2006",
+    "Username": "clyza21",
+    "Password": "cly0921!",
+    "LoyaltyPoints": -354,
+    "Transactions": [
+      {
+        "TransactionId": 1,
+        "Type": "Earn",
+        "Points": 646,
+        "Description": "Flight ID: 112 - Economy Class",
+        "Date": "2026-04-18T10:07:15.5124016+08:00"
+      },
+      {
+        "TransactionId": 2,
+        "Type": "Redeem",
+        "Points": 1000,
+        "Description": "Redeemed for travel voucher",
+        "Date": "2026-04-18T10:07:51.1018459+08:00"
+      },
+      {
+        "TransactionId": 3,
+        "Type": "Redeem",
+        "Points": 300,
+        "Description": "Redeemed for one seat upgrade",
+        "Date": "2026-04-18T10:08:02.6201015+08:00"
+      },
+      {
+        "TransactionId": 5,
+        "Type": "Redeem",
+        "Points": 500,
+        "Description": "Redeemed for 20% flight discount",
+        "Date": "2026-04-18T10:58:44.1768962+08:00"
+      }
+    ]
+  }
+]
