@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,85 +11,103 @@ namespace LoyaltyPointsDataServices
 {
     public class LPJsonData : ILPDataServices
     {
-        private List<Customer> customers = new List<Customer>();
-
-        private string _jsonFileName;
+        private List<Account> accounts = new List<Account>();
+        private readonly string _jsonFileName;
 
         public LPJsonData()
         {
-            _jsonFileName = $"{AppDomain.CurrentDomain.BaseDirectory}/Customers.json";
-
-
-            RetrieveDataFromJsonFile();
+            _jsonFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Accounts.json");
+            LoadFromFile();
+        }
+        private void SaveToFile()
+        {
+            string json = JsonSerializer.Serialize(accounts, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(_jsonFileName, json);
         }
 
-        private void SaveDataToJsonFile()
+        private void LoadFromFile()
         {
-            using (var outputStream = File.OpenWrite(_jsonFileName))
+            if (!File.Exists(_jsonFileName))
             {
-                JsonSerializer.Serialize<List<Customer>>(
-                    new Utf8JsonWriter(outputStream, new JsonWriterOptions
-                    { SkipValidation = true, Indented = true })
-                    , customers);
+                accounts = new List<Account>();
+                return;
             }
-        }
 
-        private void RetrieveDataFromJsonFile()
-        {
             string json = File.ReadAllText(_jsonFileName);
-
-            customers = JsonSerializer.Deserialize<List<Customer>>(json, new JsonSerializerOptions
+            accounts = JsonSerializer.Deserialize<List<Account>>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            }) ?? new List<Customer>();
+            }) ?? new List<Account>();
         }
-        public void AddTransaction(Customer customer, string transaction)
+
+        public void SaveAccount(Account account)
         {
-            RetrieveDataFromJsonFile();
-
-            var existing = GetCustomerByPassportId(customer.PassportId);
-            if (existing != null)
-            {
-                existing.TransactionHistory.Add(transaction);
-                SaveDataToJsonFile();
-            }
-
-        }
-        public void SaveCustomer(Customer customer)
-        {
-            RetrieveDataFromJsonFile();
-
-            var existing = GetCustomerByPassportId(customer.PassportId);
+            LoadFromFile();
+            var existing = GetAccountByUsername(account.Username);
             if (existing == null)
             {
-                customers.Add(customer);
-                SaveDataToJsonFile();
+                accounts.Add(account);
+                SaveToFile();
             }
         }
 
-        public Customer? GetCustomerByPassportId(string passportId)
+        public Account? GetAccountByUsername(string username)
         {
-            return customers.FirstOrDefault(c => c.PassportId == passportId);
+            return accounts.FirstOrDefault(a => a.Username == username);
         }
 
-        public List<Customer> GetCustomers()
+        public Account? GetAccountById(string accountId)
         {
-            RetrieveDataFromJsonFile();
-            return customers;
+            return accounts.FirstOrDefault(a => a.AccountId == accountId);
         }
-        public void UpdateCustomer(Customer customer)
-        {
-            RetrieveDataFromJsonFile();
 
-            var existing = customers.FirstOrDefault(c => c.PassportId == customer.PassportId);
+        public List<Account> GetAllAccounts()
+        {
+            LoadFromFile();
+            return accounts;
+        }
+
+        public void UpdateAccount(Account account)
+        {
+            LoadFromFile();
+            var existing = accounts.FirstOrDefault(a => a.AccountId == account.AccountId);
             if (existing != null)
             {
-                existing.CustomerName = customer.CustomerName;
-                existing.LoyaltyPoints = customer.LoyaltyPoints;
-                existing.TransactionHistory = customer.TransactionHistory;
-                SaveDataToJsonFile();
+                existing.FirstName = account.FirstName;
+                existing.LastName = account.LastName;
+                existing.Birthdate = account.Birthdate;
+                existing.Username = account.Username;
+                existing.Password = account.Password;
+                existing.LoyaltyPoints = account.LoyaltyPoints;
+                existing.Transactions = account.Transactions;
+                SaveToFile();
             }
         }
 
+        public void DeleteAccount(string accountId)
+        {
+            LoadFromFile();
+            var existing = accounts.FirstOrDefault(a => a.AccountId == accountId);
+            if (existing != null)
+            {
+                accounts.Remove(existing);
+                SaveToFile();
+            }
+        }
+
+        public void DeleteTransaction(string accountId, int transactionId)
+        {
+            LoadFromFile();
+            var account = accounts.FirstOrDefault(a => a.AccountId == accountId);
+            if (account != null)
+            {
+                var transaction = account.Transactions.FirstOrDefault(t => t.TransactionId == transactionId);
+                if (transaction != null)
+                {
+                    account.Transactions.Remove(transaction);
+                    SaveToFile();
+                }
+            }
+        }
     }
 }

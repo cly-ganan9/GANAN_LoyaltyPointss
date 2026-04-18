@@ -9,35 +9,17 @@ namespace LoyaltyPointsDataServices
 {
     public class LPDataServices
     {
-        private ILPDataServices _dataService;
-        public LPDataServices()
-        {
-            _dataService = new LPInMemoryData();
-        }
-        public LPDataServices(ILPDataServices dataService)
-        {
-            _dataService = dataService;
-        }
-        public void AddTransaction(Customer customer, string transaction)
-        {
-            _dataService.AddTransaction(customer, transaction);
-        }
-        public void SaveCustomer(Customer customer)
-        {
-            _dataService.SaveCustomer(customer);
-        }
-        public Customer? GetCustomerByPassportId(string passportId)
-        {
-            return _dataService.GetCustomerByPassportId(passportId);
-        }
-        public List<Customer> GetCustomers()
-        {
-            return _dataService.GetCustomers();
-        }
-        public void UpdateCustomer(Customer customer)
-        {
-            _dataService.UpdateCustomer(customer);
-        }
+        private readonly ILPDataServices _dataService;
 
+        public LPDataServices(ILPDataServices dataService) => _dataService = dataService;
+
+        public void SaveAccount(Account account) => _dataService.SaveAccount(account);
+        public Account? GetAccountByUsername(string username) => _dataService.GetAccountByUsername(username);
+        public Account? GetAccountById(string accountId) => _dataService.GetAccountById(accountId);
+        public List<Account> GetAllAccounts() => _dataService.GetAllAccounts();
+        public void UpdateAccount(Account account) => _dataService.UpdateAccount(account);
+        public void DeleteAccount(string accountId) => _dataService.DeleteAccount(accountId);
+        public void DeleteTransaction(string accountId, int transactionId) => _dataService.DeleteTransaction(accountId, transactionId);
     }
 }
+

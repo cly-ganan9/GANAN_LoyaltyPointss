@@ -9,38 +9,61 @@ namespace LoyaltyPointsDataServices
 {
     internal class LPInMemoryData : ILPDataServices
     {
-        private List<Customer> customers = new List<Customer>();
-        public void AddTransaction(Customer customer, string transaction)
-        {
-            customer.TransactionHistory.Add(transaction);
-        }
-        public void SaveCustomer(Customer customer)
-        {
-            var existing = GetCustomerByPassportId(customer.PassportId);
+        private List<Account> accounts = new List<Account>();
 
+        public void SaveAccount(Account account)
+        {
+            var existing = GetAccountByUsername(account.Username);
             if (existing == null)
-            {
-                customers.Add(customer);
-            }
+                accounts.Add(account);
         }
-        public Customer? GetCustomerByPassportId(string passportId)
+
+        public Account? GetAccountByUsername(string username)
         {
-            return customers.FirstOrDefault(c => c.PassportId == passportId);
+            return accounts.FirstOrDefault(a => a.Username == username);
         }
-        public List<Customer> GetCustomers()
+
+        public Account? GetAccountById(string accountId)
         {
-            return customers;
+            return accounts.FirstOrDefault(a => a.AccountId == accountId);
         }
-        public void UpdateCustomer(Customer customer)
+
+        public List<Account> GetAllAccounts()
         {
-            var existing = GetCustomerByPassportId(customer.PassportId);
+            return accounts;
+        }
+
+        public void UpdateAccount(Account account)
+        {
+            var existing = GetAccountById(account.AccountId);
             if (existing != null)
             {
-                existing.CustomerName = customer.CustomerName;
-                existing.LoyaltyPoints = customer.LoyaltyPoints;
-                existing.TransactionHistory = customer.TransactionHistory;
+                existing.FirstName = account.FirstName;
+                existing.LastName = account.LastName;
+                existing.Birthdate = account.Birthdate;
+                existing.Username = account.Username;
+                existing.Password = account.Password;
+                existing.LoyaltyPoints = account.LoyaltyPoints;
+                existing.Transactions = account.Transactions;
             }
         }
 
+        public void DeleteAccount(string accountId)
+        {
+            var existing = GetAccountById(accountId);
+            if (existing != null)
+                accounts.Remove(existing);
+        }
+
+        public void DeleteTransaction(string accountId, int transactionId)
+        {
+            var account = GetAccountById(accountId);
+            if (account != null)
+            {
+                var transaction = account.Transactions.FirstOrDefault(t => t.TransactionId == transactionId);
+                if (transaction != null)
+                    account.Transactions.Remove(transaction);
+            }
+        }
     }
 }

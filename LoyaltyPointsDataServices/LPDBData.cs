@@ -1,141 +1,146 @@
-﻿using LoyaltyPointsModels;
-using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
+using LoyaltyPointsModels;
+using Microsoft.Data.SqlClient;
 
 namespace LoyaltyPointsDataServices
 {
-        public class LPDBData : ILPDataServices
+    public class LPDBData : ILPDataServices
+    {
+        private readonly string connectionString =
+            "Data Source=localhost\\SQLEXPRESS; Initial Catalog=LPSystem; Integrated Security=True; TrustServerCertificate=True;";
+
+        // Transactions are stored as JSON string in the DB column for simplicity
+        public void SaveAccount(Account account)
         {
-            private string connectionString = "Data Source=localhost\\SQLEXPRESS; Initial Catalog = LPSystem; Integrated Security = True; TrustServerCertificate=True;";
+            string sql = "INSERT INTO Accounts (AccountId, FirstName, LastName, Birthdate, Username, Password, LoyaltyPoints, Transactions) " +
+                         "VALUES (@AccountId, @FirstName, @LastName, @Birthdate, @Username, @Password, @LoyaltyPoints, @Transactions)";
 
-            private SqlConnection sqlConnection;
+            using var conn = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@AccountId", account.AccountId);
+            cmd.Parameters.AddWithValue("@FirstName", account.FirstName);
+            cmd.Parameters.AddWithValue("@LastName", account.LastName);
+            cmd.Parameters.AddWithValue("@Birthdate", account.Birthdate);
+            cmd.Parameters.AddWithValue("@Username", account.Username);
+            cmd.Parameters.AddWithValue("@Password", account.Password);
+            cmd.Parameters.AddWithValue("@LoyaltyPoints", account.LoyaltyPoints);
+            cmd.Parameters.AddWithValue("@Transactions", JsonSerializer.Serialize(account.Transactions));
+            conn.Open();
+            cmd.ExecuteNonQuery();
+        }
 
-            public LPDBData()
+        public Account? GetAccountByUsername(string username)
+        {
+            string sql = "SELECT * FROM Accounts WHERE Username = @Username";
+
+            using var conn = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@Username", username);
+            conn.Open();
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+                return MapAccount(reader);
+
+            return null;
+        }
+
+        public Account? GetAccountById(string accountId)
+        {
+            string sql = "SELECT * FROM Accounts WHERE AccountId = @AccountId";
+
+            using var conn = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@AccountId", accountId);
+            conn.Open();
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+                return MapAccount(reader);
+
+            return null;
+        }
+
+        public List<Account> GetAllAccounts()
+        {
+            string sql = "SELECT * FROM Accounts";
+            var accounts = new List<Account>();
+
+            using var conn = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            conn.Open();
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+                accounts.Add(MapAccount(reader));
+
+            return accounts;
+        }
+
+        public void UpdateAccount(Account account)
+        {
+            string sql = "UPDATE Accounts SET FirstName=@FirstName, LastName=@LastName, Birthdate=@Birthdate, " +
+                         "Username=@Username, Password=@Password, LoyaltyPoints=@LoyaltyPoints, Transactions=@Transactions " +
+                         "WHERE AccountId=@AccountId";
+
+            using var conn = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@FirstName", account.FirstName);
+            cmd.Parameters.AddWithValue("@LastName", account.LastName);
+            cmd.Parameters.AddWithValue("@Birthdate", account.Birthdate);
+            cmd.Parameters.AddWithValue("@Username", account.Username);
+            cmd.Parameters.AddWithValue("@Password", account.Password);
+            cmd.Parameters.AddWithValue("@LoyaltyPoints", account.LoyaltyPoints);
+            cmd.Parameters.AddWithValue("@Transactions", JsonSerializer.Serialize(account.Transactions));
+            cmd.Parameters.AddWithValue("@AccountId", account.AccountId);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+        }
+
+        public void DeleteAccount(string accountId)
+        {
+            string sql = "DELETE FROM Accounts WHERE AccountId = @AccountId";
+
+            using var conn = new SqlConnection(connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@AccountId", accountId);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+        }
+
+        public void DeleteTransaction(string accountId, int transactionId)
+        {
+            var account = GetAccountById(accountId);
+            if (account != null)
             {
-                sqlConnection = new SqlConnection(connectionString);
-            }
-
-            public void AddTransaction(Customer customer, string transaction)
-            {
-                string insertStatement = "INSERT INTO LoyaltyTransactions (PassportId, TransactionDescription) VALUES (@PassportId, @TransactionDescription)";
-
-                SqlCommand command = new SqlCommand(insertStatement, sqlConnection);
-                command.Parameters.AddWithValue("@PassportId", customer.PassportId);
-                command.Parameters.AddWithValue("@TransactionDescription", transaction);
-
-                sqlConnection.Open();
-                command.ExecuteNonQuery();
-                sqlConnection.Close();
-            }
-
-            public void SaveCustomer(Customer customer)
-            {
-                string insertStatement = "INSERT INTO Customers (PassportId, CustomerName, LoyaltyPoints) VALUES (@PassportId, @CustomerName, @LoyaltyPoints)";
-
-                SqlCommand command = new SqlCommand(insertStatement, sqlConnection);
-                command.Parameters.AddWithValue("@PassportId", customer.PassportId);
-                command.Parameters.AddWithValue("@CustomerName", customer.CustomerName);
-                command.Parameters.AddWithValue("@LoyaltyPoints", customer.LoyaltyPoints);
-
-                sqlConnection.Open();
-                command.ExecuteNonQuery();
-                sqlConnection.Close();
-            }
-
-            public Customer? GetCustomerByPassportId(string passportId)
-            {
-                string selectStatement = "SELECT PassportId, CustomerName, LoyaltyPoints FROM Customers WHERE PassportId = @PassportId";
-
-                SqlCommand command = new SqlCommand(selectStatement, sqlConnection);
-                command.Parameters.AddWithValue("@PassportId", passportId);
-
-                sqlConnection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                Customer? customer = null;
-
-                if (reader.Read())
+                var t = account.Transactions.FirstOrDefault(t => t.TransactionId == transactionId);
+                if (t != null)
                 {
-                    customer = new Customer
-                    {
-                        PassportId = reader["PassportId"].ToString(),
-                        CustomerName = reader["CustomerName"].ToString(),
-                        LoyaltyPoints = (int)reader["LoyaltyPoints"],
-                        TransactionHistory = GetTransactionsByPassportId(passportId)
-                    };
+                    account.Transactions.Remove(t);
+                    UpdateAccount(account);
                 }
-
-                sqlConnection.Close();
-                return customer;
-            }
-
-            public List<Customer> GetCustomers()
-            {
-                string selectStatement = "SELECT PassportId, CustomerName, LoyaltyPoints FROM Customers";
-
-                SqlCommand command = new SqlCommand(selectStatement, sqlConnection);
-
-                sqlConnection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                List<Customer> customers = new List<Customer>();
-
-                while (reader.Read())
-                {
-                    customers.Add(new Customer
-                    {
-                        PassportId = reader["PassportId"].ToString(),
-                        CustomerName = reader["CustomerName"].ToString(),
-                        LoyaltyPoints = (int)reader["LoyaltyPoints"],
-                        TransactionHistory = new List<string>()
-                    });
-                }
-
-                sqlConnection.Close();
-                return customers;
-            }
-
-            public void UpdateCustomer(Customer customer)
-            {
-                string updateStatement = "UPDATE Customers SET CustomerName = @CustomerName, LoyaltyPoints = @LoyaltyPoints WHERE PassportId = @PassportId";
-
-                SqlCommand command = new SqlCommand(updateStatement, sqlConnection);
-                command.Parameters.AddWithValue("@CustomerName", customer.CustomerName);
-                command.Parameters.AddWithValue("@LoyaltyPoints", customer.LoyaltyPoints);
-                command.Parameters.AddWithValue("@PassportId", customer.PassportId);
-
-                sqlConnection.Open();
-                command.ExecuteNonQuery();
-                sqlConnection.Close();
-            }
-
-            private List<string> GetTransactionsByPassportId(string passportId)
-            {
-                List<string> transactions = new List<string>();
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    string selectStatement = "SELECT TransactionDescription FROM LoyaltyTransactions WHERE PassportId = @PassportId";
-
-                    SqlCommand command = new SqlCommand(selectStatement, connection);
-                    command.Parameters.AddWithValue("@PassportId", passportId);
-
-                    connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        transactions.Add(reader["TransactionDescription"].ToString());
-                    }
-                }
-
-                return transactions;
             }
         }
-    
-}
 
+        private Account MapAccount(SqlDataReader reader)
+        {
+            string transJson = reader["Transactions"].ToString() ?? "[]";
+            var transactions = JsonSerializer.Deserialize<List<Transaction>>(transJson) ?? new List<Transaction>();
+
+            return new Account
+            {
+                AccountId = reader["AccountId"].ToString()!,
+                FirstName = reader["FirstName"].ToString()!,
+                LastName = reader["LastName"].ToString()!,
+                Birthdate = reader["Birthdate"].ToString()!,
+                Username = reader["Username"].ToString()!,
+                Password = reader["Password"].ToString()!,
+                LoyaltyPoints = (int)reader["LoyaltyPoints"],
+                Transactions = transactions
+            };
+        }
+    }
+}
